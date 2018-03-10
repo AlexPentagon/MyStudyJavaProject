@@ -1,4 +1,3 @@
-
 public class Dimension {
     private final double number;
     private final String dimension;
@@ -6,6 +5,13 @@ public class Dimension {
     public Dimension(double number, String dimension) {
         this.number = number;
         this.dimension = dimension;
+    }
+
+    public Dimension(String st){
+        String[] a = st.split(" ");
+        if (a.length != 2) throw new IllegalArgumentException ("Length must be 2");
+        this.number = Double.parseDouble(a[0]);
+        this.dimension = a[1];
     }
 
     public double getNumber(){
@@ -38,13 +44,12 @@ public class Dimension {
         return new Dimension(number * time,dimension);
     }
 
-    public Dimension div (Dimension other){
+    public double div (Dimension other){
         double result;
         if (!dimension.equals(other.dimension)) throw new ArithmeticException("Dimension must be the same");
         else  result = number / other.number;
-        return new Dimension(result,"");
+        return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -54,6 +59,17 @@ public class Dimension {
             return  number == other.number && dimension.equals(other.dimension);
         }
         return false;
+    }
+
+    public int compareTo(Dimension other){
+        int result = 0;
+        if (!dimension.equals(other.dimension)) throw new ArithmeticException("Dimension must be the same");
+        else {
+            if (number == other.number) result = 0;
+            if (number < other.number) result = -11;
+            if (number > other.number) result = 11;
+        }
+        return result;
     }
 
     @Override

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class DimensionTest {
+
     @Test
     public void plus() {
         assertEquals(new Dimension(1.0,"km"),
@@ -11,7 +12,7 @@ class DimensionTest {
         assertEquals(new Dimension(10.0,"sec"),
                 new Dimension(2.0,"sec").plus(new Dimension(8.0,"sec")));
         assertEquals(new Dimension(3.0,"ql"),
-                new Dimension(2.0,"ql").plus(new Dimension(1.0,"ql")));
+                new Dimension(2.0,"ql").plus(new Dimension("1.0 ql")));
    }
 
 
@@ -41,15 +42,15 @@ class DimensionTest {
         assertEquals(new Dimension(10.0,"sec"),
                 new Dimension(2.0,"sec").times(5.0));
         assertEquals(new Dimension(3.2,"ql"),
-                new Dimension(1.6,"ql").times(2.0));
+                new Dimension("1.6 ql").times(2.0));
     }
     @Test
     public void div() {
-        assertEquals(new Dimension(1.0,""),
+        assertEquals((1.0),
                 new Dimension(2.0,"km").div(new Dimension(2.0,"km")));
-        assertEquals(new Dimension(10.1,""),
+        assertEquals((10.1),
                 new Dimension(50.5,"sec").div(new Dimension(5.0,"sec")));
-        assertEquals(new Dimension(4.444,""),
+        assertEquals((4.444),
                 new Dimension(8.888,"ql").div(new Dimension(2.0,"ql")));
     }
     @Test
@@ -59,4 +60,38 @@ class DimensionTest {
         assertFalse(new Dimension(1.0,"sec").equals(new Dimension(1.0,"km")));
         assertFalse(new Dimension(1.0,"km").equals(new Dimension(1.1,"km")));
     }
+
+    @Test
+    public void compare() {
+        assertEquals((0),
+                new Dimension(2.0,"km").compareTo(new Dimension(2.0,"km")));
+        assertEquals((11),
+                new Dimension(5.0,"km").compareTo(new Dimension(2.0,"km")));
+        assertEquals((-11),
+                new Dimension(2.0,"km").compareTo(new Dimension(3.0,"km")));
+    }
+
+
+
+    @Test
+    public void exception(){
+        try {
+            new Dimension(1.0, "km").plus(new Dimension(1.0, "sec"));
+            fail("Dimension must be the same");
+        }catch (ArithmeticException e){
+        }
+    }
+
+    @Test
+    public void getNumber(){
+        assertEquals((1.0),
+        new Dimension(1.0,"km").getNumber());
+    }
+
+    @Test
+    public void getDimension(){
+        assertEquals(("km"),
+                new Dimension(1.0,"km").getDimension());
+    }
+
 }
