@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
-
 import static Task2.Main.*;
 
 //-f D:\\notes5.txt -o D:\\note6.txt

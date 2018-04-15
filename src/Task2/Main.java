@@ -53,7 +53,7 @@ public class Main {
     }
 
     public static String flagFinder(String str) {
-        if (str.split("-").length == 1) return "";   // использовать с parser
+        if (str.split("-").length == 1) return "";
         else {
             String[] arr;
             ArrayList<String> narr = new ArrayList<>();
