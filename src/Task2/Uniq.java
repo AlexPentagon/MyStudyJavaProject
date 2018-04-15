@@ -16,7 +16,7 @@ public class Uniq {
     public boolean f = false;
     public HashMap<String, String> flags = new HashMap<>();
 
-    public Uniq(boolean i, boolean u, boolean c, boolean s, boolean o, boolean f, HashMap<String, String> flags) {
+    private Uniq(boolean i, boolean u, boolean c, boolean s, boolean o, boolean f, HashMap<String, String> flags) {
         this.i = i;
         this.u = u;
         this.c = c;
