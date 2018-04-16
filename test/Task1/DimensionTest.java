@@ -1,3 +1,6 @@
+package Task1;
+
+import Task1.Dimension;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +16,13 @@ class DimensionTest {
                 new Dimension(2.0,"sec").plus(new Dimension(8.0,"sec")));
         assertEquals(new Dimension(3.0,"ql"),
                 new Dimension(2.0,"ql").plus(new Dimension("1.0 ql")));
-   }
+        try{
+                new Dimension(1.0, "km").plus(new Dimension("1.0  1 sec"));
+        fail("Format must be :\"number dimension\"");
+        }catch (IllegalArgumentException e){
+        }
+    }
+
 
 
     @Test
@@ -71,13 +80,23 @@ class DimensionTest {
                 new Dimension(2.0,"km").compareTo(new Dimension(3.0,"km")));
     }
 
-
+    @Test
+    public void compareZer() {
+        assertEquals((0),
+                new Dimension(0,"km").compareZer());
+        assertEquals((11),
+                new Dimension(5.0,"km").compareZer());
+        assertEquals((-11),
+                new Dimension(-2.0,"km").compareZer());
+    }
 
     @Test
     public void exception(){
         try {
             new Dimension(1.0, "km").plus(new Dimension(1.0, "sec"));
             fail("Dimension must be the same");
+            new Dimension(1.0, "km").minus(new Dimension("1.0  1 sec"));
+            fail("Format must be :\"number dimension\"");
         }catch (ArithmeticException e){
         }
     }

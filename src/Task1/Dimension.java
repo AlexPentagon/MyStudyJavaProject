@@ -1,3 +1,5 @@
+package Task1;
+
 public class Dimension {
     private final double number;
     private final String dimension;
@@ -9,7 +11,7 @@ public class Dimension {
 
     public Dimension(String st){
         String[] a = st.split(" ");
-        if (a.length != 2) throw new IllegalArgumentException ("Length must be 2");
+        if (a.length != 2) throw new IllegalArgumentException ("Format must be :\"number dimension\"");
         this.number = Double.parseDouble(a[0]);
         this.dimension = a[1];
     }
@@ -66,9 +68,17 @@ public class Dimension {
         if (!dimension.equals(other.dimension)) throw new ArithmeticException("Dimension must be the same");
         else {
             if (number == other.number) result = 0;
-            if (number < other.number) result = -11;
-            if (number > other.number) result = 11;
+            else if (number < other.number) result = -11;
+            else if (number > other.number) result = 11;
         }
+        return result;
+    }
+
+    public int compareZer(){
+        int result = 0;
+        if (number == 0) result = 0;
+        else if (number < 0) result = -11;
+        else if (number > 0) result = 11;
         return result;
     }
 

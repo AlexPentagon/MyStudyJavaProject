@@ -70,18 +70,4 @@ public class Main {
         }
     }
 
-    public static String parser(String str) {
-        if (str.split("-").length == 1) return str;
-        else {
-            String[] arr;
-            arr = str.split("-");
-            String result = arr[0];
-            for (int i = 1; i < arr.length; i++) {
-                arr[i] = arr[i].substring(1, arr[i].length());
-
-                result = result + arr[i];
-            }
-            return result;
-        }
-    }
 }

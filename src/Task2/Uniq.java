@@ -16,7 +16,7 @@ public class Uniq {
     public boolean f = false;
     public HashMap<String, String> flags = new HashMap<>();
 
-    private Uniq(boolean i, boolean u, boolean c, boolean s, boolean o, boolean f, HashMap<String, String> flags) {
+    public Uniq(boolean i, boolean u, boolean c, boolean s, boolean o, boolean f, HashMap<String, String> flags) {
         this.i = i;
         this.u = u;
         this.c = c;
@@ -27,10 +27,10 @@ public class Uniq {
     }
 
     public static void main(String[] args) {
-        Uniq u = new Uniq(false, false, false, false, false, false, new HashMap<>());
+        Uniq un = new Uniq(false, false, false, false, false, false, new HashMap<>());
 
 
-        uniq(u);
+        uniq(un);
     }
 
     public static void uniq(Uniq uniq) {
@@ -84,7 +84,7 @@ public class Uniq {
             System.out.println(ex.getMessage());
         }
 
-
+//#КоляЖиви
         if (uniq.f) fileReader(arr, uniq);
 
         int counter = 0;
