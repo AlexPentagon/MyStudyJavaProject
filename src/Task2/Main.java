@@ -1,73 +1,64 @@
 package Task2;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.io.*;
+import org.apache.commons.cli.*;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.FileNotFoundException;
+
 public class Main {
+    public static void main(String[] args) throws ParseException, FileNotFoundException {
+        Option output = new Option("o", "output", false
+                , "Задает имя выходного файла");
 
-    public static void fileReader(ArrayList<String> arr, Uniq uniq) {
-        try (BufferedReader br = new BufferedReader(new FileReader(uniq.flags.get("-f")))) {
-            String text;
-            while ((text = br.readLine()) != null) {
-                arr.add(text);
-            }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+        Option ignoreRegister = new Option("i"
+                , false, "Игнорирует регистр слов");
+
+        Option countLines = new Option("c"
+                , false, "Выводит количество строк");
+
+        Option searchWithout = new Option("s"
+                , false, "Игнорирует N символов при сравнении");
+
+        Option uniqLines = new Option("u"
+                , false, "Выводит количество уникальных строк");
+
+        searchWithout.setArgs(1);
+        output.setArgs(1);
+
+        Options options = new Options();
+        options.addOption(ignoreRegister);
+        options.addOption(countLines);
+        options.addOption(searchWithout);
+        options.addOption(uniqLines);
+        options.addOption(output);
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine lines = parser.parse(options, args);
+
+        String filePath = args[args.length - 1];
+        Integer afterS ;
+
+        if(lines.hasOption("s")){
+            afterS = Integer.valueOf(lines.getOptionValue("s"));
+        }else{
+             afterS = 0;
         }
-    }
 
-    public static void fileWriter(ArrayList<String> arr,ArrayList<String> carr,
-                                  ArrayList<String> sarr, HashSet<String> uarr, Uniq uniq) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(uniq.flags.get("-o")))) {
-            if (uniq.c || uniq.u || uniq.s) {
-                if (uniq.u) {
-                    for (String elem : uarr) {
-                        bw.write(elem + "\r\n");
-                        bw.flush();
-                    }
-                }
-                if (uniq.c) {
-                    for (String elem : carr) {
-                        bw.write(elem + "\r\n");
-                        bw.flush();
+        Uniq uniq1 = new Uniq(lines.hasOption("i"),
+                              lines.hasOption("u"),
+                              lines.hasOption("c"),
+                              lines.hasOption("s"),
+                              afterS,
+                              lines.hasOption("o"));
 
-                    }
-                }
-                if (uniq.s) {
-                    for (String elem : sarr) {
-                        bw.write(elem + "\r\n");
-                        bw.flush();
-                    }
-                }
-            } else {
-                for (String elem : arr) {
-                    bw.write(elem + "\r\n");
-                    bw.flush();
-                }
+        if(lines.hasOption("o")){
+            uniq1.writeFile(uniq1.run(filePath),lines.getOptionValue("o"));
+        }else{
+            for (String line:uniq1.run(filePath)) {
+                 System.out.println(line);
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
+        System.exit(0);
     }
-
-    public static String flagFinder(String str) {
-        if (str.split("-").length == 1) return "";
-        else {
-            String[] arr;
-            ArrayList<String> narr = new ArrayList<>();
-            arr = str.split("-");
-            for (int i = 1; i < arr.length; i++) {
-                narr.add(arr[i]);
-            }
-            String sym = "";
-            for (String elem : narr) {
-                int i = 0;
-                sym = sym + " " + String.valueOf(elem.charAt(0));
-            }
-            return sym;
-        }
-    }
-
 }

@@ -1,169 +1,114 @@
 package Task2;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import static Task2.Main.*;
+import java.util.Stack;
 
-//-f D:\\notes5.txt -o D:\\note6.txt
 public class Uniq {
-    public boolean i;
-    public boolean u = false;
-    public boolean c = false;
-    public boolean s = false;
-    public boolean o = false;
-    public boolean f = false;
-    public HashMap<String, String> flags = new HashMap<>();
+    private boolean ignoreRegister,uniqLines,countLines,searchWithout,output;
+    private Integer searchNum;
 
-    public Uniq(boolean i, boolean u, boolean c, boolean s, boolean o, boolean f, HashMap<String, String> flags) {
-        this.i = i;
-        this.u = u;
-        this.c = c;
-        this.s = s;
-        this.o = o;
-        this.f = f;
-        this.flags = flags;
+    Uniq(boolean ignoreRegister,
+         boolean uniqLines,
+         boolean countLines,
+         boolean searchWithout,
+         Integer searchNum,
+         boolean output){
+
+        this.ignoreRegister = ignoreRegister;
+        this.uniqLines = uniqLines;
+        this.countLines = countLines;
+        this.searchWithout = searchWithout;
+        this.searchNum = searchNum;
+        this.output = output;
+    }
+    ArrayList<String> run(String filePath) throws FileNotFoundException {
+        ArrayList<String> lines = read(new File(filePath));
+        return uniq(lines);
     }
 
-    public static void main(String[] args) {
-        Uniq un = new Uniq(false, false, false, false, false, false, new HashMap<>());
-
-
-        uniq(un);
+    ArrayList<String> read(File file) throws FileNotFoundException {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            ArrayList<String> result = new ArrayList<>();
+            reader.lines().forEachOrdered(result::add);
+            return result;
+        }catch(FileNotFoundException e){
+            return readComLine();
+        }
     }
 
-    public static void uniq(Uniq uniq) {
-
-        ArrayList<String> arr = new ArrayList<>();
-        HashSet<String> uarr = new HashSet<>();
-        ArrayList<String> carr = new ArrayList<>();
-        ArrayList<String> sarr = new ArrayList<>();
-
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-            String text;
-            while (!(text = br.readLine()).equals("")) {
-                arr.add(text);
-                sarr.add(text);
-
-                String[] ind = flagFinder(text).split(" ");
-
-                for (String anInd : ind) {
-                    try {
-                        switch (anInd) {
-                            case "i":
-                                uniq.i = true;
-                                break;
-                            case "u":
-                                uniq.u = true;
-                                break;
-                            case "c":
-                                uniq.c = true;
-                                break;
-                            case "s":
-                                uniq.s = true;
-                                uniq.flags.put("-s", text.split("-s")[1].split(" ")[1]);
-                                break;
-                            case "o":
-                                uniq.o = true;
-                                uniq.flags.put("-o", text.split("-o")[1].split(" ")[1]);
-                                break;
-                            case "f":
-                                uniq.f = true;
-                                uniq.flags.put("-f", text.split("-f")[1].split(" ")[1]);
-                                break;
-                        }
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        System.out.println(e.getMessage());
-                    }
-
-                }
+    void writeFile(ArrayList<String> arr ,
+                   String file)throws FileNotFoundException{
+        try{
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (String line:arr) {
+                writer.write(line +"\r\n");
+                writer.flush();
             }
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-
-//#КоляЖиви
-        if (uniq.f) fileReader(arr, uniq);
-
-        int counter = 0;
-        String lf = "";
-        for (int x = 1; x < arr.size(); x++) {
-
-            if (uniq.i) {
-                if (uniq.s) {
-                    String a = arr.get(x - 1).substring(Integer.valueOf(uniq.flags.get("-s")));
-                    String b = arr.get(x).substring(Integer.valueOf(uniq.flags.get("-s")));
-                    if (a.equalsIgnoreCase(b)) sarr.add(a);
-                }
-
-                if (arr.get(x - 1).equalsIgnoreCase(arr.get(x))) {
-                    lf = arr.get(x);
-                    counter = counter + 1;
-                    arr.remove(x);
-                    x--;
-                } else {
-                    if (!lf.equalsIgnoreCase(arr.get(x - 1))) uarr.add(arr.get(x - 1));
-                    lf = "";
-                    carr.add((counter + 1) + arr.get(x-1));
-                    counter = 0;
-                }
-
-            } else {
-                if (uniq.s) {
-                    String a = arr.get(x - 1).substring(Integer.valueOf(uniq.flags.get("-s")));
-                    String b = arr.get(x).substring(Integer.valueOf(uniq.flags.get("-s")));
-                    if (a.equals(b)) sarr.remove(arr.get(x));
-                }
-
-                if (arr.get(x - 1).equals(arr.get(x))) {
-                    lf = arr.get(x);
-                    counter = counter + 1;
-                    arr.remove(x);
-                    x--;
-
-                } else {
-                    if (!lf.equals(arr.get(x - 1))) uarr.add(arr.get(x - 1));
-                    lf = "";
-                    carr.add((counter + 1) + arr.get(x-1));
-                    counter = 0;
-                }
-            }
-        }
-
-
-        if (uniq.o) fileWriter(arr,carr,sarr,uarr,uniq);
-
-        else {
-            if (uniq.c || uniq.u || uniq.s) {
-                if (uniq.u) {
-                    for (String elem : uarr) {
-                        System.out.println(elem);
-                    }
-                }
-                if (uniq.c) {
-                    for (String elem : carr) {
-                        System.out.println(elem);
-
-                    }
-                }
-                if (uniq.s) {
-                    for (String elem : sarr) {
-                        System.out.println(elem);
-                    }
-                }
-
-                } else {
-                    for (String elem : arr) {
-                        System.out.println(elem);
-                    }
-                }
-
-            }
-
+        }catch (IOException ex){
+            ex.getMessage();
         }
     }
 
 
+    ArrayList<String> readComLine(){
+        ArrayList<String> result = new ArrayList<>();
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))){
+            reader.lines().forEachOrdered(result::add);
+        }catch (IOException ex){ ex.getMessage();}
+        return result;
+    }
 
+     ArrayList<String> uniq(ArrayList<String> list){
+        ArrayList<String> result = new ArrayList<>();
+        Stack<Pair<String,Integer>> stack = new Stack<>();
+        Stack<Pair<String,Integer>> invertStack = new Stack<>();
+        Integer counter = 1;
+
+        for(String line : list){
+            if(ignoreRegister) line = line.toLowerCase();
+            StringBuffer sb = new StringBuffer(line.subSequence(0, line.length()));
+
+            if(searchWithout) {
+                sb.delete(0,searchNum);
+                line = sb.toString();
+                }
+            Pair<String,Integer> pair = new MutablePair<>(line,counter);
+            Pair<String,Integer> emptyPair = new MutablePair<>(line,0);
+            if(stack.empty())stack.push(emptyPair);
+            if(!stack.peek().getLeft().equals(line)) {
+                stack.push(pair);
+                counter = 1;
+            }else {
+                Pair<String,Integer> changePair = new MutablePair<>((stack.peek().getLeft()),(stack.peek().getValue())+1);
+                stack.pop();
+                stack.push(changePair);
+            }
+
+        }
+        while (!stack.empty()){
+            invertStack.push(stack.pop());
+        }
+
+         while (!invertStack.empty()){
+             if(uniqLines && countLines){
+               if(invertStack.peek().getRight() == 1) result.add(invertStack.peek().getRight()+""+invertStack.pop().getLeft());
+               else invertStack.pop();
+             }
+             else if(uniqLines || countLines){
+                if(uniqLines){
+                    if(invertStack.peek().getRight() == 1) {
+                        result.add(invertStack.pop().getLeft());
+                    }else invertStack.pop();
+                }else result.add(invertStack.peek().getRight()+""+invertStack.pop().getLeft());
+             }
+             else result.add(invertStack.pop().getLeft());
+         }
+    return result;
+    }
+}
