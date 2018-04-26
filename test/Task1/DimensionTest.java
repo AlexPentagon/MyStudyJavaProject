@@ -61,6 +61,12 @@ class DimensionTest {
                 new Dimension(50.5,"sec").div(new Dimension(5.0,"sec")));
         assertEquals((4.444),
                 new Dimension(8.888,"ql").div(new Dimension(2.0,"ql")));
+        try {
+            assertEquals((4.444),
+                    new Dimension(8.888,"qlr").div(new Dimension(2.0,"ql")));
+        }catch (ArithmeticException e){
+            System.out.println("Dimension must be the same");
+        }
     }
     @Test
     public void equals(){
@@ -111,6 +117,15 @@ class DimensionTest {
     public void getDimension(){
         assertEquals(("km"),
                 new Dimension(1.0,"km").getDimension());
+    }
+    @Test
+    public void hashcode(){
+        assertEquals((3427),
+                new Dimension(1.0,"km").hashcode());
+        assertEquals((3210),
+                new Dimension(1.0,"dm").hashcode());
+        assertEquals((3430),
+                new Dimension(4.98,"km").hashcode());
     }
 
 }

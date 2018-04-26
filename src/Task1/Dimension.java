@@ -63,6 +63,13 @@ public class Dimension {
         return false;
     }
 
+
+    public int hashcode(){
+        int result = 0;
+        result = (int) (result * 49 + number + dimension.hashCode());
+        return result;
+    }
+
     public int compareTo(Dimension other){
         int result = 0;
         if (!dimension.equals(other.dimension)) throw new ArithmeticException("Dimension must be the same");

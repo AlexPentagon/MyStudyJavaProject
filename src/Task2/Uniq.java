@@ -42,8 +42,7 @@ public class Uniq {
         }
     }
 
-    void writeFile(ArrayList<String> arr ,
-                   String file)throws FileNotFoundException{
+    void writeFile(ArrayList<String> arr,String file)throws FileNotFoundException{
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             for (String line:arr) {
