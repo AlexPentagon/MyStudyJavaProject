@@ -1,9 +1,6 @@
 package Task2;
 
-
 import org.apache.commons.cli.*;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.FileNotFoundException;
 
 public class Main {
@@ -36,7 +33,11 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
         CommandLine lines = parser.parse(options, args);
 
-        String filePath = args[args.length - 1];
+        String filePath = "";
+        try {
+            filePath = args[args.length - 1];
+        }catch(ArrayIndexOutOfBoundsException e){}
+
         Integer afterS ;
 
         if(lines.hasOption("s")){
@@ -48,17 +49,11 @@ public class Main {
         Uniq uniq1 = new Uniq(lines.hasOption("i"),
                               lines.hasOption("u"),
                               lines.hasOption("c"),
-                              lines.hasOption("s"),
-                              afterS,
-                              lines.hasOption("o"));
+                              afterS);
 
-        if(lines.hasOption("o")){
-            uniq1.writeFile(uniq1.run(filePath),lines.getOptionValue("o"));
-        }else{
-            for (String line:uniq1.run(filePath)) {
-                 System.out.println(line);
-            }
-        }
+
+if (lines.hasOption("o")) uniq1.writeFile(uniq1.run(filePath),lines.getOptionValue("o"));
+else uniq1.writeCons(uniq1.run(filePath));
         System.exit(0);
     }
 }
