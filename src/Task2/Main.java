@@ -1,10 +1,10 @@
 package Task2;
 
 import org.apache.commons.cli.*;
-import java.io.FileNotFoundException;
 
 public class Main {
-    public static void main(String[] args) throws ParseException, FileNotFoundException {
+    public static void main(String[] args) throws ParseException {
+
         Option output = new Option("o", "output", false
                 , "Задает имя выходного файла");
 
@@ -20,8 +20,10 @@ public class Main {
         Option uniqLines = new Option("u"
                 , false, "Выводит количество уникальных строк");
 
+
         searchWithout.setArgs(1);
         output.setArgs(1);
+
 
         Options options = new Options();
         options.addOption(ignoreRegister);
@@ -33,12 +35,15 @@ public class Main {
         CommandLineParser parser = new DefaultParser();
         CommandLine lines = parser.parse(options, args);
 
+        boolean input = false;
         String filePath = "";
         try {
-            filePath = args[args.length - 1];
-        }catch(ArrayIndexOutOfBoundsException e){}
+            filePath = lines.getArgs()[0];
+        }catch(ArrayIndexOutOfBoundsException e){ }
 
+        if (filePath.equals("")) input = true;
         Integer afterS ;
+
 
         if(lines.hasOption("s")){
             afterS = Integer.valueOf(lines.getOptionValue("s"));
@@ -49,11 +54,12 @@ public class Main {
         Uniq uniq1 = new Uniq(lines.hasOption("i"),
                               lines.hasOption("u"),
                               lines.hasOption("c"),
-                              afterS);
+                              afterS,
+                              lines.hasOption("o"));
 
 
-if (lines.hasOption("o")) uniq1.writeFile(uniq1.run(filePath),lines.getOptionValue("o"));
-else uniq1.writeCons(uniq1.run(filePath));
+    uniq1.write(uniq1.run(input,filePath),lines.getOptionValue("o"));
+
         System.exit(0);
     }
 }

@@ -15,7 +15,7 @@ Uniq uniq;
 
     @Test
     void nothing() throws IOException{
-        uniq = new Uniq(false,false,false,0);
+        uniq = new Uniq(false,false,false,0,true);
         ArrayList<String> actual = new ArrayList<>();
         ArrayList<Pair<String,Integer>> expected = new ArrayList<>();
 
@@ -32,9 +32,10 @@ Uniq uniq;
         expected.add(pair3);
         assertEquals(  expected, uniq.uniq(actual));
         }
+
     @Test
     void flags_i() throws IOException{
-        uniq = new Uniq(true,false,false,0);
+        uniq = new Uniq(true,false,false,0,true);
         ArrayList<String> actual = new ArrayList<>();
         ArrayList<Pair<String, Integer>> expected = new ArrayList<>();
         actual.add("aa");
@@ -44,23 +45,17 @@ Uniq uniq;
         actual.add("aa");
         Pair<String,Integer> pair1 = new MutablePair<>("aa",2);
         expected.add(pair1);
-        Pair<String,Integer> pair2 = new MutablePair<>("ac",1);
+        Pair<String,Integer> pair2 = new MutablePair<>("aC",1);
         expected.add(pair2);
-        Pair<String,Integer> pair3 = new MutablePair<>("aa",2);
+        Pair<String,Integer> pair3 = new MutablePair<>("AA",2);
         expected.add(pair3);
         assertEquals(  expected, uniq.uniq(actual));
 
     }
-    @Test
-    void flags_c() throws IOException{
 
-
-
-    }
     @Test
     void flags_s() throws IOException{
-
-        uniq = new Uniq(false,false,false,1);
+        uniq = new Uniq(false,false,false,1,true);
         ArrayList<String> actual = new ArrayList<>();
         ArrayList<Pair<String, Integer>> expected = new ArrayList<>();
         actual.add("aa");
@@ -68,19 +63,15 @@ Uniq uniq;
         actual.add("ca");
         actual.add("aa");
         actual.add("aa");
-        Pair<String,Integer> pair = new MutablePair<>("a",5);
+        Pair<String,Integer> pair = new MutablePair<>("aa",5);
         expected.add(pair);
         assertEquals(  expected, uniq.uniq(actual));
 
     }
-    @Test
-    void flags_u() throws IOException{
-    }
 
     @Test
     void flags_i_s() throws IOException{
-
-        uniq = new Uniq(true,false,false,1);
+        uniq = new Uniq(true,false,false,1,true);
         ArrayList<String> actual = new ArrayList<>();
         ArrayList<Pair<String, Integer>> expected = new ArrayList<>();
         actual.add("aa");
@@ -88,11 +79,12 @@ Uniq uniq;
         actual.add("ca");
         actual.add("AA");
         actual.add("aa");
-        Pair<String,Integer> pair = new MutablePair<>("a",5);
+        Pair<String,Integer> pair = new MutablePair<>("aa",5);
         expected.add(pair);
         assertEquals(  expected, uniq.uniq(actual));
 
     }
+
     @Test
     void flags_i_c() throws IOException{
 
@@ -111,5 +103,7 @@ Uniq uniq;
     }@Test
     void flags_i_c_u_s() throws IOException{
 
+    }@Test
+    void flags_u() throws IOException{
     }
 }
