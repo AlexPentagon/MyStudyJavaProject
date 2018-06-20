@@ -51,6 +51,11 @@ public class Player {
         return r;
     }
 
+    public boolean isDead(){
+        if(lives <= 0)return true;
+        else return false;
+    }
+
     public boolean die(){
         lives -= 1;
         x = r;
@@ -92,5 +97,7 @@ public class Player {
         g.setColor(color1.darker());
         g.drawOval(x - r,y - r,r * 2,r * 2);
         g.setStroke(new BasicStroke(1));
+
+
     }
 }

@@ -2,6 +2,8 @@ package Task2;
 
 import org.apache.commons.cli.*;
 
+import java.io.IOException;
+
 public class Main {
     public static void main(String[] args) throws ParseException {
 
@@ -57,8 +59,9 @@ public class Main {
                               afterS,
                               lines.hasOption("o"));
 
-
-    uniq1.write(uniq1.run(input,filePath),lines.getOptionValue("o"));
+    try {
+        uniq1.write(uniq1.run(filePath), lines.getOptionValue("o"));
+    }catch(IOException e) { System.out.println("File not found"); }
 
         System.exit(0);
     }

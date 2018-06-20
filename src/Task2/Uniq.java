@@ -23,61 +23,50 @@ public class Uniq {
 
     }
 
-    ArrayList<Pair<String,Integer>> run(boolean input, String filePath) {
-        ArrayList<String> lines = read(input,new File(filePath));
+    ArrayList<Pair<String,Integer>> run(String filePath) throws FileNotFoundException {
+        ArrayList<String> lines = read(filePath);
         return uniq(lines);
     }
 
-    ArrayList<String> read(boolean input,File file) {
+    ArrayList<String> read(String file) throws FileNotFoundException {
         BufferedReader reader;
         ArrayList<String> result = new ArrayList<>();
-        try {
-            if (!input) reader = new BufferedReader(new FileReader(file));
+
+            if (!file.equals("")) reader = new BufferedReader(new FileReader(file));
             else reader = new BufferedReader(new InputStreamReader(System.in));
             reader.lines().forEach(result::add);
-           } catch (FileNotFoundException e) {
-               System.out.println("File not found");
-           }
+
            return result;
     }
 
 
-    void write(ArrayList<Pair<String,Integer>> arr,String file){
+    void write(ArrayList<Pair<String,Integer>> arr,String file) throws IOException{
         BufferedWriter writer = null;
-        try{
+
            if(output) writer = new BufferedWriter(new FileWriter(file));
+           else writer = new BufferedWriter(new OutputStreamWriter( System.out));
             String indecator = "";
             for (Pair<String,Integer> pair:arr) {
 
                 if (countLines)indecator = pair.getRight()+" ";
-                if (uniqLines ) {
-                    if(pair.getRight()==1){
-                        if(!output) System.out.println(indecator + "" + pair.getLeft());
-                        else {
-                            writer.write(indecator + "" + pair.getLeft());
-                            writer.newLine();
-                            writer.flush();
-                        }
-                    }
-                }else {
-                    if(!output)System.out.println(indecator + "" + pair.getLeft());
-                    else{
-                        writer.write(indecator+""+pair.getLeft());
-                        writer.newLine();
-                        writer.flush();
-                    }
+
+                if (!uniqLines || pair.getRight() == 1) {
+                    writer.write(indecator + "" + pair.getLeft());
+                    writer.newLine();
+                    writer.flush();
                 }
+
+
             }
-        }catch (IOException ex){ }
+
     }
 
 
      ArrayList<Pair<String,Integer>> uniq(ArrayList<String> list){
-        int counter = 0;
         String compar1 = "";
-        String compar2 = "";
-        ArrayList<String> comparList = new ArrayList<>();
+        String compar3 = "";
         ArrayList<Pair<String,Integer>> result = new ArrayList<>();
+         MutablePair<String,Integer> pair = null;
 
         for(String line : list){
 
@@ -90,23 +79,12 @@ public class Uniq {
                 else compar1 = (compar1.substring(searchNum, compar1.length()));
             }
 
-            MutablePair<String,Integer> pair = new MutablePair<>(line,1);
-            if(result.isEmpty()){
-                pair.setValue(0);
+            if(result.isEmpty() || !(compar3).equals(compar1)) {
+                pair = new MutablePair<>(line,1);
                 result.add(pair);
-                comparList.add(compar1);
-                compar2 = line;
-            }
-            if(!(comparList.get(counter).equals(compar1))) {
-                result.add(pair);
-                comparList.add(compar1);
-                counter++;
-                compar2 = line;
-            }else {
-                pair.setLeft(compar2);
-                pair.setValue(result.get(counter).getValue()+1);
-                result.remove(counter);
-                result.add(pair);
+                compar3 = (compar1);
+            } else {
+                pair.setValue(pair.getValue()+1);
             }
 
         }

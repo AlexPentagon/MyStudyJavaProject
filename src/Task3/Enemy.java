@@ -16,8 +16,10 @@ public class Enemy {
     private int type;
     private Color color1;
 
-    public Enemy(int type){
+    public Enemy(int x, int y ,int type){
         this.type = type;
+        this.y = y;
+        this.x = x;
 
         if(type == 1){
             color1 = Color.RED;
@@ -94,7 +96,7 @@ public class Enemy {
 
         }
         if (NumOfStatus(eX + eR,eY + eR / 2,oneCells))  {
-           x = (int) eX -2;
+            x = (int) eX -2;
             dx = -dx;
 
         }

@@ -31,36 +31,88 @@ public class Cell {
         return status;
     }
 
-   public void update(Player player,ArrayList<Cell> nullCells,ArrayList<Cell> cellMap){
+
+
+    public static int coordinates (int x, int y){
+        int result = x * 4 + y / 10 ;
+        return result;
+    }
+
+    public static int circled(int num){
+        int result;
+        if(num % 10 < 5) result = (num / 10) * 10;
+        else result = (num / 10 + 1) * 10;
+        return result;
+    }
+
+    public void recurcion(ArrayList<Cell> cellMap,Cell cell,int num){
+
+        if(cell.getStatus() == 1 || cell.getStatus() == 0) return;
+
+        else cell.status = 2;
+        recurcion(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())+num),num);
+    }
+
+    public void update(Player player,ArrayList<Cell> nullCells,ArrayList<Cell> cellMap,ArrayList<Enemy> enemies){
+
+        double cX = getX();
+        double cY = getY();
+        double cS = getS();
+
+        double pX = player.getX();
+        double pY = player.getY();
+        double pR = player.getR();
+
+        if ((pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && status != 1){
+            status = 0;
+            nullCells.add(this);
+        }
+        if(status == 1 && (pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && !nullCells.isEmpty()) {
 
 
 
-           double cX = getX();
-           double cY = getY();
-           double cS = getS();
+            for (Cell elem : nullCells) {
+                elem.status = 1;
 
-           double pX = player.getX();
-           double pY = player.getY();
-           double pR = player.getR();
 
-           if ((pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && status != 1){
-               status = 0;
-               nullCells.add(this);
-           }
-           if(status == 1 && (pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && !nullCells.isEmpty()) {
 
-               for (Cell elem : nullCells) {
-                   elem.status = 1;
-               }
-               nullCells.clear();
-           }
 
-           if(nullCells.isEmpty()) {
-               for(Cell elem : cellMap){
-                   if (elem.status == 0 ) elem.status = -1;
-               }
-           }
+            }
+            //fill space , need to think more ||||||||||||||||||||||||||||
+            for(Enemy enemy : enemies) {
+                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), 1);
+                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), -1);
+                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), 40);
+                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), -40);
+            }
+for (int i = 0;i<10;i++) {
 
+    for (Cell cell : cellMap) {
+        if (cell.status == 2) recurcion(cellMap, cell, +1);
+        if (cell.status == 2) recurcion(cellMap, cell, -1);
+        if (cell.status == 2) recurcion(cellMap, cell, -40);
+        if (cell.status == 2) recurcion(cellMap, cell, +40);
+    }
+
+
+        } for (Cell cell:cellMap){
+                if(cell.getStatus() == -1) cell.status=1;
+            }
+
+            for (Cell cell:cellMap){
+                if(cell.getStatus() == 2) cell.status = -1;
+            }
+        //||||||||||||||||||||||||||||||||||||||||||||||||
+            nullCells.clear();
+
+
+        }
+
+        if(nullCells.isEmpty()) {
+            for(Cell elem : cellMap){
+                if (elem.status == 0 ) elem.status = -1;
+            }
+        }
 
 
     }
@@ -74,8 +126,7 @@ public class Cell {
         g.fillRect(x, y, size, size);
 
         g.setStroke(new BasicStroke(1));
-        g.setColor(empty.darker());
-        g.drawRect(x - size,y - size,size * 2,size * 2);
+
         g.setStroke(new BasicStroke(1));
 
         if (status == 0) {
@@ -86,5 +137,7 @@ public class Cell {
             g.setColor(full);
             g.fillRect(x, y, size, size);
         }
+        g.setColor(empty.darker());
+        g.drawRect(x,y,size,size);
     }
 }

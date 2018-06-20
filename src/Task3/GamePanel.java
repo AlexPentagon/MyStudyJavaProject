@@ -12,6 +12,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static int WIDTH = 400;
     public static int HEIGHT = 400;
 
+    boolean b = true;
+
     private boolean running;
     private Thread thread;
 
@@ -20,10 +22,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private int FPS = 30;
     private double avarageFPS;
+    String win = "";
 
     private Player player;
     private Map map;
-    //private Cell cell = new Cell(10,10,-1);
     public ArrayList<Cell> cellMap = new ArrayList<>();
     public static ArrayList<Enemy> enemies;
     ArrayList<Cell> nullCells = new ArrayList<>();
@@ -46,7 +48,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     public void run(){
-
         map = new Map(WIDTH,HEIGHT);
 
 
@@ -58,9 +59,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         player = new Player();
         enemies = new ArrayList<Enemy>();
-        enemies.add(new Enemy(1));
+        enemies.add(new Enemy(WIDTH/3,HEIGHT/2,1));
+        enemies.add(new Enemy(WIDTH-WIDTH/10,HEIGHT-HEIGHT/10,1));
 
-        //System.out.println(map.createMap(WIDTH,HEIGHT).get(1));
 
         long startTime;
         long URDTimeMillis;
@@ -85,9 +86,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
             try{
                 Thread.sleep(waitTime);
-            }catch (Exception e){
-              //  e.printStackTrace();
-            }
+            }catch (Exception e){ }
 
             totalTime += System.nanoTime() - startTime;
             frameCount++;
@@ -96,7 +95,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 frameCount = 0;
                 totalTime = 0;
             }
+            if(map.isWin(cellMap,WIDTH,HEIGHT)) {
+                running = false;
+                win = "Y O U   A R E   W I N !";
+
+            }
         }
+
+        g.setColor(new Color(0,100,255));
+        g.fillRect(0,0,WIDTH,HEIGHT);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 16));
+        g.drawString(win,WIDTH/2 - WIDTH / 5,HEIGHT/2);
+        gameDraw();
     }
 
 
@@ -104,31 +115,37 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public void gameUpdate(){
         player.update();
 
-       for(int i = 0;i < cellMap.size();i++){
-          cellMap.get(i).update(player,nullCells,cellMap);
-          if(cellMap.get(i).getStatus() == 1) oneCells.add(cellMap.get(i));
+        for(Cell elem : cellMap){
+            elem.update(player,nullCells,cellMap,enemies);
+            if(elem.getStatus() == 1) {
 
-       }
+                oneCells.add(elem);
+
+            }
+
+
+
+        }
         for(int j = 0;j < enemies.size();j++){
             enemies.get(j).update(oneCells);
-            oneCells.clear();
+
             if(enemies.get(j).tryKill(player,nullCells)) nullCells.clear();
+
+
         }
+        oneCells.clear();
 
-
+        if(player.isDead()){
+            running = false;
+            win = "G A M E   O V E R !";
+        }
 
     }
 
     public void gameRender(){
 
-
-        g.setColor(Color.WHITE);
-        g.fillRect(0,0,WIDTH,HEIGHT);
-        g.setColor(Color.BLACK);
-        g.drawString("FPS:" + avarageFPS,10,10);
-
-        for(int i = 0;i < cellMap.size();i++){
-            cellMap.get(i).draw(g);
+        for(Cell elem : cellMap){
+            elem.draw(g);
         }
 
 
@@ -138,6 +155,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         for(int i = 0;i < enemies.size();i++){
             enemies.get(i).draw(g);
         }
+
 
     }
 
