@@ -2,7 +2,7 @@
   <artifact type="jar" name="MyStudyJavaProject:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/MyStudyJavaProject_jar</output-path>
     <root id="archive" name="MyStudyJavaProject.jar">
-      <element id="module-output" name="MyStudyJavaProject" />
+      <element id="module-output" name="Xonix" />
     </root>
   </artifact>
 </component>

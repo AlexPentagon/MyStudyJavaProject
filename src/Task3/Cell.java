@@ -4,12 +4,22 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Cell {
+
+    enum Status{
+        FULL(1),TRACK(0),EMPTY(-1),HELPER1(2);
+
+        Status(int i) {
+
+        }
+    }
     private int x;
     private int y;
-    private int status = -1;
+    Status status;
     private final int size = 10;
 
-    public Cell(int x,int y,int status){
+
+
+    public Cell(int x,int y,Status status){
         this.x = x;
         this.y = y;
         this.status = status;
@@ -27,30 +37,39 @@ public class Cell {
     public int getS(){
         return size;
     }
+
     public int getStatus(){
-        return status;
-    }
-
-
-
-    public static int coordinates (int x, int y){
-        int result = x * 4 + y / 10 ;
+        int result = -1;
+        switch (status){
+        case HELPER1: result = 2;
+            break;
+        case TRACK: result = 0;
+            break;
+        case FULL: result = 1;
+            break;
+        }
         return result;
     }
 
-    public static int circled(int num){
+    private static int coordinates (int x, int y){
+        return x * 4 + y / 10 ;
+    }
+
+    private static int circled(int num){
         int result;
         if(num % 10 < 5) result = (num / 10) * 10;
         else result = (num / 10 + 1) * 10;
         return result;
     }
 
-    public void recurcion(ArrayList<Cell> cellMap,Cell cell,int num){
+    public void fillSpace(ArrayList<Cell> cellMap,Cell cell){
+        if (cellMap.get(coordinates(cell.getX(),cell.getY())).getStatus() != -1) return;
 
-        if(cell.getStatus() == 1 || cell.getStatus() == 0) return;
-
-        else cell.status = 2;
-        recurcion(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())+num),num);
+        cellMap.get(coordinates(cell.getX(),cell.getY())).status = Status.HELPER1;
+        fillSpace(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())+1));
+        fillSpace(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())-1));
+        fillSpace(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())+40));
+        fillSpace(cellMap,cellMap.get(coordinates(cell.getX(),cell.getY())-40));
     }
 
     public void update(Player player,ArrayList<Cell> nullCells,ArrayList<Cell> cellMap,ArrayList<Enemy> enemies){
@@ -63,58 +82,34 @@ public class Cell {
         double pY = player.getY();
         double pR = player.getR();
 
-        if ((pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && status != 1){
-            status = 0;
+        if ((pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && status != Status.FULL){
+            status = Status.TRACK;
             nullCells.add(this);
         }
-        if(status == 1 && (pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && !nullCells.isEmpty()) {
 
-
-
+        if(status == Status.FULL && (pX + pR <= cX + cS && pX >= cX) && (pY + pR <= cY + cS && pY >= cY) && !nullCells.isEmpty()) {
             for (Cell elem : nullCells) {
-                elem.status = 1;
-
-
-
-
+                elem.status = Status.FULL;
             }
-            //fill space , need to think more ||||||||||||||||||||||||||||
+
             for(Enemy enemy : enemies) {
-                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), 1);
-                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), -1);
-                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), 40);
-                recurcion(cellMap, new Cell(circled(enemy.getX()), circled(enemy.getY()), -1), -40);
-            }
-for (int i = 0;i<10;i++) {
-
-    for (Cell cell : cellMap) {
-        if (cell.status == 2) recurcion(cellMap, cell, +1);
-        if (cell.status == 2) recurcion(cellMap, cell, -1);
-        if (cell.status == 2) recurcion(cellMap, cell, -40);
-        if (cell.status == 2) recurcion(cellMap, cell, +40);
-    }
-
-
-        } for (Cell cell:cellMap){
-                if(cell.getStatus() == -1) cell.status=1;
+                fillSpace(cellMap, cellMap.get(coordinates(circled(enemy.getX()), circled(enemy.getY()))));
             }
 
             for (Cell cell:cellMap){
-                if(cell.getStatus() == 2) cell.status = -1;
+                if(cell.getStatus() == -1) cell.status=Status.FULL;
+                if(cell.getStatus() == 2) cell.status = Status.EMPTY;
+
             }
-        //||||||||||||||||||||||||||||||||||||||||||||||||
+
             nullCells.clear();
-
-
         }
 
         if(nullCells.isEmpty()) {
             for(Cell elem : cellMap){
-                if (elem.status == 0 ) elem.status = -1;
+                if (elem.status == Status.TRACK ) elem.status = Status.EMPTY;
             }
         }
-
-
     }
 
     public void draw(Graphics2D g){
@@ -127,17 +122,18 @@ for (int i = 0;i<10;i++) {
 
         g.setStroke(new BasicStroke(1));
 
-        g.setStroke(new BasicStroke(1));
-
-        if (status == 0) {
+        if (status == Status.TRACK) {
             g.setColor(track);
             g.fillRect(x, y, size, size);
         }
-        if (status == 1) {
+        if (status == Status.FULL) {
             g.setColor(full);
             g.fillRect(x, y, size, size);
         }
+
         g.setColor(empty.darker());
         g.drawRect(x,y,size,size);
+
+
     }
 }
