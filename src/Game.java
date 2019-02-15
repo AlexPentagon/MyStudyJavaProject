@@ -1,5 +1,3 @@
-package Task3;
-
 import javax.swing.*;
 
 public class Game {
